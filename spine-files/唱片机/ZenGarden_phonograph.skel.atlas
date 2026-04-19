@@ -1,0 +1,41 @@
+
+ZenGarden_phonograph.skel.png
+size: 476,215
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+ZenGarden_phonograph_base.png
+  rotate: true
+  xy: 192, 2
+  size: 211, 168
+  orig: 215, 175
+  offset: 3, 1
+  index: -1
+ZenGarden_phonograph_needle.png
+  rotate: true
+  xy: 362, 6
+  size: 75, 65
+  orig: 75, 65
+  offset: 0, 0
+  index: -1
+ZenGarden_phonograph_record.png
+  rotate: false
+  xy: 362, 83
+  size: 112, 49
+  orig: 115, 60
+  offset: 1, 5
+  index: -1
+ZenGarden_phonograph_shaft1.png
+  rotate: true
+  xy: 362, 134
+  size: 79, 110
+  orig: 80, 115
+  offset: 1, 2
+  index: -1
+ZenGarden_phonograph_shaft2.png
+  rotate: false
+  xy: 2, 3
+  size: 188, 210
+  orig: 200, 210
+  offset: 6, 0
+  index: -1

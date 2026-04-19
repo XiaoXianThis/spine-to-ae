@@ -1,0 +1,216 @@
+Zombie_disco.png
+size: 2048, 512
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+Locator
+  rotate: false
+  xy: 381, 53
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+Zombie_dancer__head
+  rotate: false
+  xy: 719, 264
+  size: 265, 240
+  orig: 265, 240
+  offset: 0, 0
+  index: -1
+Zombie_disco_chops
+  rotate: false
+  xy: 902, 141
+  size: 95, 115
+  orig: 95, 115
+  offset: 0, 0
+  index: -1
+Zombie_disco_collar_overlay
+  rotate: true
+  xy: 1684, 263
+  size: 83, 108
+  orig: 83, 108
+  offset: 0, 0
+  index: -1
+Zombie_disco_fish
+  rotate: false
+  xy: 8, 14
+  size: 73, 39
+  orig: 73, 39
+  offset: 0, 0
+  index: -1
+Zombie_disco_fish2
+  rotate: true
+  xy: 2000, 431
+  size: 73, 39
+  orig: 73, 39
+  offset: 0, 0
+  index: -1
+Zombie_disco_glasses
+  rotate: false
+  xy: 992, 394
+  size: 255, 110
+  orig: 255, 110
+  offset: 0, 0
+  index: -1
+Zombie_disco_hair
+  rotate: false
+  xy: 8, 249
+  size: 375, 255
+  orig: 375, 255
+  offset: 0, 0
+  index: -1
+Zombie_disco_innerarm_lower
+  rotate: false
+  xy: 900, 8
+  size: 100, 125
+  orig: 100, 125
+  offset: 0, 0
+  index: -1
+Zombie_disco_innerarm_lowercuff
+  rotate: false
+  xy: 722, 25
+  size: 70, 30
+  orig: 70, 30
+  offset: 0, 0
+  index: -1
+Zombie_disco_innerarm_upper
+  rotate: true
+  xy: 579, 8
+  size: 70, 135
+  orig: 70, 135
+  offset: 0, 0
+  index: -1
+Zombie_disco_innerfoot
+  rotate: false
+  xy: 381, 71
+  size: 190, 155
+  orig: 190, 155
+  offset: 0, 0
+  index: -1
+Zombie_disco_innerhand
+  rotate: true
+  xy: 1008, 40
+  size: 100, 140
+  orig: 100, 140
+  offset: 0, 0
+  index: -1
+Zombie_disco_innerhand_point
+  rotate: true
+  xy: 1393, 266
+  size: 100, 140
+  orig: 100, 140
+  offset: 0, 0
+  index: -1
+Zombie_disco_innerleg_lower
+  rotate: true
+  xy: 206, 44
+  size: 197, 167
+  orig: 197, 167
+  offset: 0, 0
+  index: -1
+Zombie_disco_innerleg_upper
+  rotate: true
+  xy: 719, 166
+  size: 90, 175
+  orig: 90, 175
+  offset: 0, 0
+  index: -1
+Zombie_disco_lowerbody
+  rotate: false
+  xy: 1684, 354
+  size: 170, 150
+  orig: 170, 150
+  offset: 0, 0
+  index: -1
+Zombie_disco_medalion
+  rotate: false
+  xy: 1378, 157
+  size: 101, 101
+  orig: 101, 101
+  offset: 0, 0
+  index: -1
+Zombie_disco_outerarm_lower
+  rotate: true
+  xy: 1005, 148
+  size: 110, 145
+  orig: 110, 145
+  offset: 0, 0
+  index: -1
+Zombie_disco_outerarm_upper
+  rotate: true
+  xy: 1541, 271
+  size: 95, 135
+  orig: 95, 135
+  offset: 0, 0
+  index: -1
+Zombie_disco_outerarm_upper_bone
+  rotate: true
+  xy: 722, 63
+  size: 95, 170
+  orig: 95, 170
+  offset: 0, 0
+  index: -1
+Zombie_disco_outerfoot_lower
+  rotate: false
+  xy: 1255, 388
+  size: 208, 116
+  orig: 208, 116
+  offset: 0, 0
+  index: -1
+Zombie_disco_outerfoot_lower_overlay
+  rotate: false
+  xy: 992, 266
+  size: 210, 120
+  orig: 210, 120
+  offset: 0, 0
+  index: -1
+Zombie_disco_outerfoot_upper
+  rotate: false
+  xy: 1471, 374
+  size: 205, 130
+  orig: 205, 130
+  offset: 0, 0
+  index: -1
+Zombie_disco_outerhand
+  rotate: false
+  xy: 579, 86
+  size: 130, 140
+  orig: 130, 140
+  offset: 0, 0
+  index: -1
+Zombie_disco_outerhand_point
+  rotate: false
+  xy: 1862, 364
+  size: 130, 140
+  orig: 130, 140
+  offset: 0, 0
+  index: -1
+Zombie_disco_outerleg_lower
+  rotate: false
+  xy: 8, 61
+  size: 190, 180
+  orig: 190, 180
+  offset: 0, 0
+  index: -1
+Zombie_disco_outerleg_upper
+  rotate: true
+  xy: 1210, 285
+  size: 95, 175
+  orig: 95, 175
+  offset: 0, 0
+  index: -1
+Zombie_disco_upperbody
+  rotate: true
+  xy: 391, 234
+  size: 270, 320
+  orig: 270, 320
+  offset: 0, 0
+  index: -1
+Zombie_jaw
+  rotate: false
+  xy: 1210, 202
+  size: 160, 75
+  orig: 160, 75
+  offset: 0, 0
+  index: -1
+
