@@ -1,0 +1,21 @@
+# Build output
+build/
+*.exe
+
+# Frontend dependencies
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Spine test files
+spine-files/
+
+# Binary tools
+bin/

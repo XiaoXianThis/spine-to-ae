@@ -110,6 +110,37 @@ go build -o spine2ae .
 ./spine2ae <your_spine.json>
 ```
 
+### ⚠️ 拖拽功能开发注意事项
+
+Wails v2 在 Windows 上的文件拖拽实现链路较长，修改时务必遵守以下规则，否则拖拽会静默失效：
+
+**必须满足的 5 个条件：**
+
+1. **`main.go` 中 `EnableFileDrop: true`，`DisableWebViewDrop: false`**
+   - `DisableWebViewDrop` 必须为 `false`，否则 WebView2 不触发 HTML5 drag 事件，整个拖拽链路断裂
+
+2. **前端必须调用 JS `OnFileDrop(callback, true)`**
+   - 这是注册 `window.addEventListener('drop', ...)` 的唯一入口
+   - Go 端 `runtime.OnFileDrop` **不会**注册 HTML5 监听器，它只监听事件，不能替代 JS 调用
+   - 第二个参数 `useDropTarget` 必须为 `true`，源码中 `false` 会导致 `onDrop` 直接 return 不处理文件
+
+3. **根元素必须有内联 CSS 属性 `--wails-drop-target: drop`**
+   - 必须通过 `style={{ '--wails-drop-target': 'drop' }}` 设置
+   - `data-wails-drop-target="true"` 等 HTML 属性**无效**，Wails 源码用 `getComputedStyle().getPropertyValue()` 检查 CSS 自定义属性
+
+4. **注册前先调用 `OnFileDropOff()` 清除旧注册**
+   - Wails 内部有 `flags.registered` 标志，重复调用 `OnFileDrop` 会静默返回
+   - `OnFileDrop` 不返回取消函数，React `useEffect` 清理时需显式调用 `OnFileDropOff()`
+
+5. **`useEffect` 依赖数组为 `[]`，回调通过 `useRef` 保持最新**
+   - 避免 React 重渲染时反复注销/注册拖拽监听器
+
+**拖拽链路（Windows/WebView2）：**
+```
+HTML5 drop 事件 → Wails JS onDrop → chrome.webview.postMessageWithAdditionalObjects
+→ Go 后端解析文件路径 → Go 触发 "wails:file-drop" 事件 → JS EventsOn 回调
+```
+
 ### 许可证
 
 MIT
@@ -214,6 +245,37 @@ go build -o spine2ae .
 
 # Run
 ./spine2ae <your_spine.json>
+```
+
+### ⚠️ Drag & Drop Developer Notes
+
+Wails v2 file drag-and-drop on Windows has a long chain of dependencies. Breaking any link causes silent failure:
+
+**5 mandatory conditions:**
+
+1. **`main.go`: `EnableFileDrop: true`, `DisableWebViewDrop: false`**
+   - `DisableWebViewDrop` must be `false`; otherwise WebView2 won't fire HTML5 drag events
+
+2. **Frontend must call JS `OnFileDrop(callback, true)`**
+   - This is the only way to register `window.addEventListener('drop', ...)`
+   - Go-side `runtime.OnFileDrop` does NOT register HTML5 listeners — it only listens for events
+   - `useDropTarget` must be `true`; the Wails source returns early in `onDrop` when `false`
+
+3. **Root element must have inline CSS `--wails-drop-target: drop`**
+   - Set via `style={{ '--wails-drop-target': 'drop' }}`
+   - HTML attributes like `data-wails-drop-target` do NOT work — Wails checks CSS custom properties via `getComputedStyle().getPropertyValue()`
+
+4. **Call `OnFileDropOff()` before re-registering**
+   - Wails has an internal `flags.registered` guard that silently skips duplicate `OnFileDrop` calls
+   - `OnFileDrop` returns no cancel function; React cleanup must explicitly call `OnFileDropOff()`
+
+5. **`useEffect` with `[]` deps, use `useRef` for the latest callback**
+   - Prevents React re-renders from repeatedly unregistering/registering drag listeners
+
+**Drop chain (Windows/WebView2):**
+```
+HTML5 drop event → Wails JS onDrop → chrome.webview.postMessageWithAdditionalObjects
+→ Go resolves file paths → Go emits "wails:file-drop" → JS EventsOn callback
 ```
 
 ### License
