@@ -1,149 +1,52 @@
-# spineToAE
+# Spine → AE
 
-![screenshot](imgs/24dab2cc-7bed-4361-879e-55fe172dfd58.png)
+![cover](imgs/24dab2cc-7bed-4361-879e-55fe172dfd58.png)
 
-Converts Spine skeletal animations to Adobe After Effects ExtendScript (.jsx).
+将 Spine 骨骼动画转换为 After Effects 工程 — 带图形界面，拖入即用。由UP主 [@大不6仙](https://space.bilibili.com/12724008) 开发。
+
+Convert Spine skeletal animations into After Effects projects — GUI included, drag & drop.
+
+**[中文](#中文)** | **[English](#english)**
 
 ---
 
-**[中文文档](#中文文档)** | **[English](#english)**
-
----
-
-## 中文文档
+## 中文
 
 ### 功能特性
 
-- **Spine 3.7/3.8 JSON 支持**：解析骨骼、插槽、皮肤、附件（区域和网格）
-- **加权网格支持**：多骨骼加权顶点，带位置/旋转表达式
-- **动画关键帧**：旋转、平移、缩放，带贝塞尔缓动
-- **跨平台**：Windows/Linux/macOS 单文件可执行
-- **命令行界面**：完整的输出选项控制
+- **图形界面** — 拖放 Spine 文件即可使用，无需命令行
+- **Spine 3.7 / 3.8 JSON & .skel** — 自动将 `.skel` 转为 JSON
+- **加权网格** — 多骨骼加权顶点，通过表达式近似变形
+- **动画关键帧** — 旋转、平移、缩放，贝塞尔缓动
+- **Atlas 解包** — 自动识别 atlas / 图集贴图，一键解包为独立纹理
+- **批量导出** — 可一次导出全部动画
+- **自动导入 AE** — 生成 JSX 后可直接在 After Effects 中执行
 
 ### 使用方法
 
-```bash
-spine2ae <spine.json> [选项]
-```
+1. 下载 [Releases](https://github.com/XiaoXianThis/spine-to-ae/releases) 中的可执行文件
+2. 运行 `SpineToAE.exe`
+3. 将 `.json` 或 `.skel` 文件拖入窗口
+4. 按需调整参数，点击 **生成 JSX**
 
-### 命令行选项
+![GUI 截图](imgs/QQ20260425-053018.png)
 
-| 选项 | 说明 | 默认值 |
-|------|------|--------|
-| `--texture <dir>` | 纹理 PNG 目录路径 | `<json_dir>/texture` |
-| `--animation <name>` | 要应用的动画 | JSON 中的第一个动画 |
-| `--output <file>` | 输出 .jsx 路径 | JSON 同目录下的 `<json_name>.jsx` |
-| `--name <comp>` | AE 合成名称 | JSON 文件名 |
-| `--padding <px>` | 骨架周围填充 | 200 |
-| `--run` | 在 After Effects 中自动执行 | false |
-| `--ae <path>` | AfterFX.exe 路径 | 自动检测（Windows） |
-| `--list` | 列出可用动画并退出 | false |
+#### 界面说明
 
-### 使用示例
+| 区域 | 说明 |
+|------|------|
+| **拖放区** | 将 Spine `.json` / `.skel` 拖入此处加载 |
+| **贴图目录** | 自动设为 `<json 目录>/texture`，可手动修改 |
+| **Atlas 文件 / 图集贴图** | 自动识别，支持一键解包为独立纹理 |
+| **动画** | 选择单个动画或「全部动画」批量导出 |
+| **合成名称 / 边距** | AE 合成名及画布边距 |
+| **自动导入 AE** | 开启后自动检测 AfterFX.exe 并执行生成的脚本 |
 
-```bash
-# 基本转换
-spine2ae spine-files/SunFlower.json
+> **注意**：`.skel` 文件需要同目录下存在 `skeleton.exe`（放在 `bin/` 目录即可）。
 
-# 指定动画
-spine2ae spine-files/SunFlower.json --animation idle
+### 下载
 
-# 自定义输出和合成名称
-spine2ae spine-files/SunFlower.json --animation idle --output output/SunFlower.jsx --name "我的动画"
-
-# 在 After Effects 中自动运行（Windows）
-spine2ae spine-files/SunFlower.json --animation idle --run
-```
-
-### 工作原理
-
-1. **解析**：读取 Spine JSON 并规范化数据结构
-2. **骨骼世界变换**：计算层次骨骼矩阵
-3. **网格处理**：
-   - 计算 UV 质心作为锚点
-   - 计算世界边界框用于缩放
-   - 生成每骨骼加权贡献
-4. **脚本生成**：输出 ExtendScript，包含：
-   - 创建正确尺寸的 AE 合成
-   - 导入纹理素材
-   - 为骨骼创建空图层（100x100，锚点 [50,50]）
-   - 为附件创建图像图层
-   - 对于加权网格：使用位置/旋转表达式而非父子关系
-   - 应用带正确缓动的动画关键帧
-
-### 坐标系统
-
-| 系统 | Y 轴 | 旋转 | 原点 |
-|------|------|------|------|
-| Spine | 向上 | 逆时针为正 | 骨架根节点 (0,0) |
-| AE | 向下 | 顺时针为正 | 合成左上角 |
-
-- **位置**：`AE_x = bone.x`，`AE_y = -bone.y`（相对于父级）
-- **旋转**：`AE_rotation = -Spine_rotation`
-- **缩放**：`AE_scale = [Spine_scaleX * 100, Spine_scaleY * 100]`
-
-### 网格变形方案
-
-由于 After Effects 缺少直接的网格变形脚本功能，本工具使用：
-
-- **位置表达式**：贡献骨骼世界位置的加权平均
-- **旋转表达式**：骨骼世界旋转的加权平均（相对于设置姿态的差值）
-- **缩放**：从网格世界边界框计算
-
-这提供了近似的网格移动，无需真正的顶点变形。
-
-### 下载预编译版本
-
-访问 [Releases](https://github.com/XiaoXianThis/spine-to-ae/releases) 获取预编译的可执行文件。
-
-### 从源码编译
-
-```bash
-# 克隆仓库
-git clone https://github.com/XiaoXianThis/spine-to-ae.git
-cd spine-to-ae/go
-
-# 编译
-go build -o spine2ae .
-
-# 运行
-./spine2ae <your_spine.json>
-```
-
-### ⚠️ 拖拽功能开发注意事项
-
-Wails v2 在 Windows 上的文件拖拽实现链路较长，修改时务必遵守以下规则，否则拖拽会静默失效：
-
-**必须满足的 5 个条件：**
-
-1. **`main.go` 中 `EnableFileDrop: true`，`DisableWebViewDrop: false`**
-   - `DisableWebViewDrop` 必须为 `false`，否则 WebView2 不触发 HTML5 drag 事件，整个拖拽链路断裂
-
-2. **前端必须调用 JS `OnFileDrop(callback, true)`**
-   - 这是注册 `window.addEventListener('drop', ...)` 的唯一入口
-   - Go 端 `runtime.OnFileDrop` **不会**注册 HTML5 监听器，它只监听事件，不能替代 JS 调用
-   - 第二个参数 `useDropTarget` 必须为 `true`，源码中 `false` 会导致 `onDrop` 直接 return 不处理文件
-
-3. **根元素必须有内联 CSS 属性 `--wails-drop-target: drop`**
-   - 必须通过 `style={{ '--wails-drop-target': 'drop' }}` 设置
-   - `data-wails-drop-target="true"` 等 HTML 属性**无效**，Wails 源码用 `getComputedStyle().getPropertyValue()` 检查 CSS 自定义属性
-
-4. **注册前先调用 `OnFileDropOff()` 清除旧注册**
-   - Wails 内部有 `flags.registered` 标志，重复调用 `OnFileDrop` 会静默返回
-   - `OnFileDrop` 不返回取消函数，React `useEffect` 清理时需显式调用 `OnFileDropOff()`
-
-5. **`useEffect` 依赖数组为 `[]`，回调通过 `useRef` 保持最新**
-   - 避免 React 重渲染时反复注销/注册拖拽监听器
-
-**拖拽链路（Windows/WebView2）：**
-```
-HTML5 drop 事件 → Wails JS onDrop → chrome.webview.postMessageWithAdditionalObjects
-→ Go 后端解析文件路径 → Go 触发 "wails:file-drop" 事件 → JS EventsOn 回调
-```
-
-### 许可证
-
-MIT
+访问 [Releases](https://github.com/XiaoXianThis/spine-to-ae/releases) 获取预编译版本。
 
 ---
 
@@ -151,132 +54,117 @@ MIT
 
 ### Features
 
-- **Spine 3.7/3.8 JSON Support**: Parses bones, slots, skins, attachments (region & mesh)
-- **Weighted Mesh Support**: Multi-bone weighted vertices with position/rotation expressions
-- **Animation Keyframes**: Rotate, Translate, Scale with bezier easing
-- **Cross-Platform**: Single binary executable for Windows/Linux/macOS
-- **CLI Interface**: Full control over output options
+- **GUI** — Drag & drop Spine files, no command line needed
+- **Spine 3.7 / 3.8 JSON & .skel** — Auto-converts `.skel` to JSON
+- **Weighted Meshes** — Multi-bone weighted vertices with expression-based deformation
+- **Animation Keyframes** — Rotate, Translate, Scale with bezier easing
+- **Atlas Unpacking** — Auto-detects atlas / page image, one-click unpack to individual textures
+- **Batch Export** — Export all animations at once
+- **Auto Import to AE** — Run generated JSX directly in After Effects
 
 ### Usage
 
-```bash
-spine2ae <spine.json> [options]
-```
+1. Download the executable from [Releases](https://github.com/XiaoXianThis/spine-to-ae/releases)
+2. Run `SpineToAE.exe`
+3. Drag a `.json` or `.skel` file into the window
+4. Adjust settings as needed, click **Generate JSX**
 
-### Options
+![GUI Screenshot](imgs/QQ20260425-053018.png)
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `--texture <dir>` | Path to texture PNGs directory | `<json_dir>/texture` |
-| `--animation <name>` | Animation to apply | First animation in JSON |
-| `--output <file>` | Output .jsx path | `<json_name>.jsx` next to JSON |
-| `--name <comp>` | AE composition name | JSON file name |
-| `--padding <px>` | Padding around skeleton | 200 |
-| `--run` | Auto-execute in After Effects | false |
-| `--ae <path>` | Path to AfterFX.exe | Auto-detect (Windows) |
-| `--list` | List available animations and exit | false |
+#### UI Overview
 
-### Examples
+| Area | Description |
+|------|-------------|
+| **Drop Zone** | Drag Spine `.json` / `.skel` files here |
+| **Texture Dir** | Auto-set to `<json_dir>/texture`, editable |
+| **Atlas / Page Image** | Auto-detected; one-click unpack to individual textures |
+| **Animation** | Select a single animation or "All Animations" for batch export |
+| **Comp Name / Padding** | AE composition name and canvas padding |
+| **Auto Import AE** | Auto-detects AfterFX.exe and runs the generated script |
 
-```bash
-# Basic conversion
-spine2ae spine-files/SunFlower.json
+> **Note**: `.skel` files require `skeleton.exe` in the `bin/` directory next to the app.
 
-# With specific animation
-spine2ae spine-files/SunFlower.json --animation idle
+### Download
 
-# Custom output and composition name
-spine2ae spine-files/SunFlower.json --animation idle --output output/SunFlower.jsx --name "My Animation"
+Visit [Releases](https://github.com/XiaoXianThis/spine-to-ae/releases) for pre-built binaries.
 
-# Auto-run in After Effects (Windows)
-spine2ae spine-files/SunFlower.json --animation idle --run
-```
+---
 
-### How It Works
+## 开发文档 / Development
 
-1. **Parsing**: Reads Spine JSON and normalizes data structures
-2. **Bone World Transforms**: Computes hierarchical bone matrices
-3. **Mesh Processing**:
-   - Calculates UV centroid for anchor points
-   - Computes world bounding box for scale
-   - Generates per-bone weighted contributions
-4. **Script Generation**: Outputs ExtendScript that:
-   - Creates AE composition with proper dimensions
-   - Imports texture footage
-   - Creates null layers for bones (100x100, anchor at [50,50])
-   - Creates image layers for attachments
-   - For weighted meshes: uses Position/Rotation expressions instead of parenting
-   - Applies animation keyframes with proper easing
+### 技术栈 / Tech Stack
 
-### Coordinate Systems
+- **后端 / Backend**: Go + [Wails v2](https://wails.io)
+- **前端 / Frontend**: React + Tailwind CSS + Vite
 
-| System | Y-Axis | Rotation | Origin |
-|--------|--------|----------|--------|
-| Spine | Up | CCW positive | Skeleton root (0,0) |
-| AE | Down | CW positive | Comp top-left |
-
-- **Position**: `AE_x = bone.x`, `AE_y = -bone.y` (relative to parent)
-- **Rotation**: `AE_rotation = -Spine_rotation`
-- **Scale**: `AE_scale = [Spine_scaleX * 100, Spine_scaleY * 100]`
-
-### Mesh Deformation Approach
-
-Since After Effects lacks direct mesh deformation scripting, this tool uses:
-
-- **Position Expression**: Weighted average of contributing bone world positions
-- **Rotation Expression**: Weighted average of bone world rotations (delta from setup pose)
-- **Scale**: Computed from mesh world bounding box
-
-This provides approximate mesh movement without true vertex deformation.
-
-### Download Pre-built Binaries
-
-Visit [Releases](https://github.com/XiaoXianThis/spine-to-ae/releases) for pre-built executables.
-
-### Build from Source
+### 从源码构建 / Build from Source
 
 ```bash
-# Clone repository
 git clone https://github.com/XiaoXianThis/spine-to-ae.git
 cd spine-to-ae/go
 
-# Build
-go build -o spine2ae .
+# 安装前端依赖 / Install frontend deps
+cd frontend && npm install && cd ..
 
-# Run
-./spine2ae <your_spine.json>
+# 开发模式 / Dev mode
+wails dev
+
+# 构建 / Build
+wails build
 ```
 
-### ⚠️ Drag & Drop Developer Notes
+### 工作原理 / How It Works
 
-Wails v2 file drag-and-drop on Windows has a long chain of dependencies. Breaking any link causes silent failure:
+1. **解析** — 读取 Spine JSON，规范化骨骼、插槽、皮肤、附件数据
+2. **骨骼世界变换** — 递归计算层次骨骼矩阵
+3. **网格处理** — UV 质心锚点、世界边界框缩放、每骨骼加权贡献
+4. **脚本生成** — 输出 ExtendScript (.jsx)：
+   - 创建 AE 合成（正确尺寸）
+   - 导入纹理素材
+   - 骨骼 → 空图层（100×100，锚点 50,50）
+   - 附件 → 图像图层
+   - 加权网格 → 位置/旋转表达式
+   - 动画关键帧 + 贝塞尔缓动
 
-**5 mandatory conditions:**
+### 坐标系统 / Coordinate Systems
 
-1. **`main.go`: `EnableFileDrop: true`, `DisableWebViewDrop: false`**
-   - `DisableWebViewDrop` must be `false`; otherwise WebView2 won't fire HTML5 drag events
+| System | Y-Axis | Rotation | Origin |
+|--------|--------|----------|--------|
+| Spine | Up (+Y) | CCW positive | Skeleton root (0,0) |
+| AE | Down (+Y) | CW positive | Comp top-left |
 
-2. **Frontend must call JS `OnFileDrop(callback, true)`**
-   - This is the only way to register `window.addEventListener('drop', ...)`
-   - Go-side `runtime.OnFileDrop` does NOT register HTML5 listeners — it only listens for events
-   - `useDropTarget` must be `true`; the Wails source returns early in `onDrop` when `false`
+- **Position**: `AE_x = bone.x`, `AE_y = -bone.y`
+- **Rotation**: `AE_rotation = -Spine_rotation`
+- **Scale**: `AE_scale = [scaleX × 100, scaleY × 100]`
 
-3. **Root element must have inline CSS `--wails-drop-target: drop`**
-   - Set via `style={{ '--wails-drop-target': 'drop' }}`
-   - HTML attributes like `data-wails-drop-target` do NOT work — Wails checks CSS custom properties via `getComputedStyle().getPropertyValue()`
+### 网格变形方案 / Mesh Deformation
 
-4. **Call `OnFileDropOff()` before re-registering**
-   - Wails has an internal `flags.registered` guard that silently skips duplicate `OnFileDrop` calls
-   - `OnFileDrop` returns no cancel function; React cleanup must explicitly call `OnFileDropOff()`
+AE 不支持脚本级网格变形，本工具使用表达式近似：
 
-5. **`useEffect` with `[]` deps, use `useRef` for the latest callback**
-   - Prevents React re-renders from repeatedly unregistering/registering drag listeners
+- **位置** — 贡献骨骼世界位置的加权平均
+- **旋转** — 骨骼世界旋转的加权平均（相对 setup pose 差值）
+- **缩放** — 网格世界边界框推算
 
-**Drop chain (Windows/WebView2):**
+### ⚠️ Wails 拖拽开发注意 / Drag & Drop Notes
+
+Wails v2 在 Windows/WebView2 上的拖拽链路较长，修改时必须满足以下 5 个条件，否则拖拽会静默失效：
+
+1. **`main.go`**: `EnableFileDrop: true` + `DisableWebViewDrop: false`
+2. **前端调用** `OnFileDrop(callback, true)` — 唯一注册 HTML5 drop 监听的入口；`useDropTarget` 必须为 `true`
+3. **根元素** CSS 自定义属性 `--wails-drop-target: drop`（通过 `style` 内联设置，HTML attribute 无效）
+4. **注册前** 调用 `OnFileDropOff()` 清除旧注册（内部 `flags.registered` 会跳过重复注册）
+5. **`useEffect([], ...)`** + `useRef` 保持回调最新，避免 React 重渲染反复注销注册
+
+**拖拽链路 / Drop Chain (Windows/WebView2):**
+
 ```
-HTML5 drop event → Wails JS onDrop → chrome.webview.postMessageWithAdditionalObjects
-→ Go resolves file paths → Go emits "wails:file-drop" → JS EventsOn callback
+HTML5 drop → Wails JS onDrop → chrome.webview.postMessageWithAdditionalObjects
+→ Go 解析文件路径 → Go 触发 "wails:file-drop" → JS EventsOn 回调
 ```
+
+### 引用
+
+- [SpineSkeletonDataConverter](https://github.com/wang606/SpineSkeletonDataConverter) - 用于将 Spine 的 .skel 文件转换为 JSON 格式
 
 ### License
 
